@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html {
+    direction: rtl;
+    font-family: 'Heebo', Arial, sans-serif;
+  }
+
+  body {
+    @apply bg-cream-100 text-forest-900 antialiased;
+  }
+
+  input, select, textarea {
+    @apply text-forest-900;
+  }
+}
+
+@layer components {
+  .page-title {
+    @apply text-2xl md:text-3xl font-bold text-forest-800 mb-1;
+  }
+
+  .page-subtitle {
+    @apply text-forest-600 mb-6;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-cream-300 shadow-sm;
+  }
+
+  .card-body {
+    @apply p-5 md:p-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-forest-700 text-white hover:bg-forest-800 active:bg-forest-900;
+  }
+
+  .btn-secondary {
+    @apply btn bg-cream-200 text-forest-800 hover:bg-cream-300 border border-cream-300;
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-500 text-white hover:bg-gold-600;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-lg border border-cream-300 bg-white focus:outline-none focus:ring-2 focus:ring-forest-500 focus:border-transparent transition;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-forest-700 mb-1.5;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-green {
+    @apply badge bg-forest-100 text-forest-800;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold-400/20 text-gold-600;
+  }
+
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-700;
+  }
+
+  .badge-red {
+    @apply badge bg-red-100 text-red-700;
+  }
+
+  .badge-blue {
+    @apply badge bg-blue-100 text-blue-700;
+  }
+}
