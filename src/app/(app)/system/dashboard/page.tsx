@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Building2, Users, UserPlus, Calendar, Share2, MessageSquare, Shield } from "lucide-react";
 import { useData } from "@/lib/store";
-import { StatCard, PageHeader } from "@/components/ui/Card";
+import { StatCard } from "@/components/ui/Card";
 import { formatDate, isUpcoming } from "@/lib/utils";
 
 export default function SystemDashboardPage() {
@@ -18,7 +18,13 @@ export default function SystemDashboardPage() {
 
   return (
     <div>
-      <PageHeader title="דשבורד מנהל מערכת" subtitle="סקירה כללית של Forum Lexellence" />
+      <div className="hero-banner mb-8">
+        <div className="relative z-10">
+          <p className="text-gold-400 text-sm font-medium mb-1">ניהול מערכת</p>
+          <h1 className="font-display text-3xl font-semibold">דשבורד מנהל מערכת</h1>
+          <p className="text-forest-200 mt-2">סקירה כללית של Forum Lexellence</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <StatCard label="קבוצות" value={data.groups.length} icon={<Building2 className="w-6 h-6" />} accent />
@@ -53,22 +59,22 @@ export default function SystemDashboardPage() {
         </div>
       </div>
 
-      <h3 className="font-bold text-forest-800 mb-4">ניהול מהיר</h3>
+      <h3 className="font-display font-semibold text-forest-900 mb-4">ניהול מהיר</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link href="/system/users" className="card hover:shadow-md transition-shadow text-center py-4">
-          <Users className="w-6 h-6 mx-auto text-forest-600 mb-2" />
+        <Link href="/system/users" className="quick-link text-center py-5">
+          <Users className="w-6 h-6 mx-auto text-gold-500 mb-2" />
           <span className="text-sm font-medium text-forest-800">משתמשים</span>
         </Link>
-        <Link href="/system/groups" className="card hover:shadow-md transition-shadow text-center py-4">
-          <Building2 className="w-6 h-6 mx-auto text-forest-600 mb-2" />
+        <Link href="/system/groups" className="quick-link text-center py-5">
+          <Building2 className="w-6 h-6 mx-auto text-gold-500 mb-2" />
           <span className="text-sm font-medium text-forest-800">קבוצות</span>
         </Link>
-        <Link href="/system/announcements" className="card hover:shadow-md transition-shadow text-center py-4">
-          <MessageSquare className="w-6 h-6 mx-auto text-forest-600 mb-2" />
+        <Link href="/system/announcements" className="quick-link text-center py-5">
+          <MessageSquare className="w-6 h-6 mx-auto text-gold-500 mb-2" />
           <span className="text-sm font-medium text-forest-800">הודעות מערכת</span>
         </Link>
-        <Link href="/system/reports" className="card hover:shadow-md transition-shadow text-center py-4">
-          <Share2 className="w-6 h-6 mx-auto text-forest-600 mb-2" />
+        <Link href="/system/reports" className="quick-link text-center py-5">
+          <Share2 className="w-6 h-6 mx-auto text-gold-500 mb-2" />
           <span className="text-sm font-medium text-forest-800">דוחות</span>
         </Link>
       </div>

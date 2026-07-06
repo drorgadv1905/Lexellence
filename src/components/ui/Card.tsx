@@ -4,11 +4,15 @@ interface CardProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  gold?: boolean;
 }
 
-export function Card({ children, className = "", onClick }: CardProps) {
+export function Card({ children, className = "", onClick, gold }: CardProps) {
   return (
-    <div className={`card ${onClick ? "cursor-pointer hover:shadow-md transition-shadow" : ""} ${className}`} onClick={onClick}>
+    <div
+      className={`${gold ? "card-gold" : "card"} ${onClick ? "cursor-pointer hover:shadow-elevated transition-shadow duration-300" : ""} ${className}`}
+      onClick={onClick}
+    >
       <div className="card-body">{children}</div>
     </div>
   );
@@ -23,16 +27,16 @@ interface StatCardProps {
 
 export function StatCard({ label, value, icon, accent }: StatCardProps) {
   return (
-    <div className={`card ${accent ? "border-gold-400/40 bg-gradient-to-br from-white to-cream-100" : ""}`}>
+    <div className={`card ${accent ? "card-gold" : ""}`}>
       <div className="card-body flex items-center gap-4">
         {icon && (
-          <div className="w-12 h-12 rounded-lg bg-forest-100 flex items-center justify-center text-forest-700">
+          <div className="w-12 h-12 rounded-xl bg-forest-800 flex items-center justify-center text-gold-400 shrink-0">
             {icon}
           </div>
         )}
         <div>
-          <p className="text-sm text-forest-600">{label}</p>
-          <p className="text-2xl font-bold text-forest-800">{value}</p>
+          <p className="text-sm text-forest-500">{label}</p>
+          <p className="text-2xl font-display font-semibold text-forest-900">{value}</p>
         </div>
       </div>
     </div>
@@ -48,9 +52,9 @@ interface EmptyStateProps {
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
     <div className="card">
-      <div className="card-body text-center py-12">
-        <p className="text-lg font-medium text-forest-700 mb-1">{title}</p>
-        {description && <p className="text-forest-500 mb-4">{description}</p>}
+      <div className="card-body text-center py-14">
+        <p className="font-display text-xl font-semibold text-forest-800 mb-1">{title}</p>
+        {description && <p className="text-forest-500 mb-5">{description}</p>}
         {action}
       </div>
     </div>
@@ -77,7 +81,7 @@ export function Avatar({ name, size = "md" }: AvatarProps) {
 
   return (
     <div
-      className={`${sizes[size]} rounded-full bg-forest-700 text-white flex items-center justify-center font-semibold shrink-0`}
+      className={`${sizes[size]} rounded-full bg-gradient-to-br from-forest-800 to-forest-900 text-gold-400 flex items-center justify-center font-semibold shrink-0 ring-2 ring-gold-400/20`}
     >
       {initials}
     </div>

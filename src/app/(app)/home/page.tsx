@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Users, User, PlusCircle, Bell, Share2, MessageSquare } from "lucide-react";
+import { Calendar, Users, User, PlusCircle, Bell, Share2, MessageSquare, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useData } from "@/lib/store";
 import { canViewReferral } from "@/lib/permissions";
@@ -58,27 +58,40 @@ export default function HomePage() {
 
   return (
     <div>
-      <PageHeader
-        title={`שלום, ${user.full_name}`}
-        subtitle={group ? `קבוצת ${group.name}` : "ברוכים הבאים ל-Forum Lexellence"}
-      />
+      <div className="hero-banner mb-8">
+        <div className="relative z-10">
+          <p className="text-gold-400 text-sm font-medium mb-2">ברוכים הבאים</p>
+          <h1 className="font-display text-3xl md:text-4xl font-semibold mb-2">
+            שלום, {user.full_name}
+          </h1>
+          <p className="text-forest-200 text-lg">
+            {group ? group.name : "Forum Lexellence — פורום מקצועי לעורכי דין"}
+          </p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Link href="/profile" className="card hover:shadow-md transition-shadow">
-          <div className="card-body flex items-center gap-3">
-            <User className="w-8 h-8 text-forest-600" />
+        <Link href="/profile" className="quick-link">
+          <div className="card-body flex items-center gap-4">
+            <div className="quick-link-icon">
+              <User className="w-6 h-6" />
+            </div>
             <span className="font-medium text-forest-800">הפרופיל שלי</span>
           </div>
         </Link>
-        <Link href="/members" className="card hover:shadow-md transition-shadow">
-          <div className="card-body flex items-center gap-3">
-            <Users className="w-8 h-8 text-forest-600" />
+        <Link href="/members" className="quick-link">
+          <div className="card-body flex items-center gap-4">
+            <div className="quick-link-icon">
+              <Users className="w-6 h-6" />
+            </div>
             <span className="font-medium text-forest-800">חברי הפורום</span>
           </div>
         </Link>
-        <Link href="/requests" className="card hover:shadow-md transition-shadow">
-          <div className="card-body flex items-center gap-3">
-            <PlusCircle className="w-8 h-8 text-gold-500" />
+        <Link href="/requests" className="quick-link">
+          <div className="card-body flex items-center gap-4">
+            <div className="quick-link-icon bg-gold-500">
+              <PlusCircle className="w-6 h-6 text-white" />
+            </div>
             <span className="font-medium text-forest-800">פרסום בקשה חדשה</span>
           </div>
         </Link>
@@ -86,11 +99,11 @@ export default function HomePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {nextEvent && (
-          <Card>
+          <Card gold>
             <div className="flex items-start gap-3 mb-4">
               <Calendar className="w-6 h-6 text-gold-500 shrink-0 mt-1" />
               <div>
-                <h3 className="font-bold text-forest-800">האירוע הקרוב</h3>
+                <h3 className="font-display font-semibold text-forest-900">האירוע הקרוב</h3>
                 <p className="text-forest-700 mt-1">{nextEvent.title}</p>
                 <p className="text-sm text-forest-500 mt-1">
                   {formatDate(nextEvent.date)} | {nextEvent.start_time}
@@ -110,8 +123,8 @@ export default function HomePage() {
 
         <Card>
           <div className="flex items-center gap-2 mb-4">
-            <Bell className="w-5 h-5 text-forest-600" />
-            <h3 className="font-bold text-forest-800">עדכונים אחרונים</h3>
+            <Bell className="w-5 h-5 text-gold-500" />
+            <h3 className="font-display font-semibold text-forest-900">עדכונים אחרונים</h3>
           </div>
           {announcements.length === 0 ? (
             <p className="text-forest-500 text-sm">אין עדכונים חדשים</p>
@@ -129,8 +142,8 @@ export default function HomePage() {
 
         <Card>
           <div className="flex items-center gap-2 mb-4">
-            <MessageSquare className="w-5 h-5 text-forest-600" />
-            <h3 className="font-bold text-forest-800">בקשות שיתוף פעולה</h3>
+            <MessageSquare className="w-5 h-5 text-gold-500" />
+            <h3 className="font-display font-semibold text-forest-900">בקשות שיתוף פעולה</h3>
           </div>
           {recentRequests.length === 0 ? (
             <p className="text-forest-500 text-sm">אין בקשות חדשות</p>
@@ -147,15 +160,16 @@ export default function HomePage() {
               ))}
             </ul>
           )}
-          <Link href="/requests" className="text-sm text-forest-600 hover:text-forest-800 mt-3 inline-block">
-            לכל הבקשות ←
+          <Link href="/requests" className="inline-flex items-center gap-1 text-sm text-forest-600 hover:text-forest-900 mt-3">
+            <ArrowLeft className="w-4 h-4" />
+            לכל הבקשות
           </Link>
         </Card>
 
         <Card>
           <div className="flex items-center gap-2 mb-4">
-            <Share2 className="w-5 h-5 text-forest-600" />
-            <h3 className="font-bold text-forest-800">הפניות אחרונות</h3>
+            <Share2 className="w-5 h-5 text-gold-500" />
+            <h3 className="font-display font-semibold text-forest-900">הפניות אחרונות</h3>
           </div>
           {myReferrals.length === 0 ? (
             <p className="text-forest-500 text-sm">לא דיווחת על הפניות לאחרונה</p>
@@ -176,8 +190,9 @@ export default function HomePage() {
               })}
             </ul>
           )}
-          <Link href="/referrals" className="text-sm text-forest-600 hover:text-forest-800 mt-3 inline-block">
-            לכל ההפניות ←
+          <Link href="/referrals" className="inline-flex items-center gap-1 text-sm text-forest-600 hover:text-forest-900 mt-3">
+            <ArrowLeft className="w-4 h-4" />
+            לכל ההפניות
           </Link>
         </Card>
       </div>

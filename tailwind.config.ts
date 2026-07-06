@@ -25,6 +25,7 @@ const config: Config = {
           300: "#ebe3d4",
         },
         gold: {
+          300: "#dcc68a",
           400: "#c9a962",
           500: "#b8943f",
           600: "#9a7a32",
@@ -32,6 +33,11 @@ const config: Config = {
       },
       fontFamily: {
         heebo: ["Heebo", "Arial", "sans-serif"],
+        display: ["Playfair Display", "Georgia", "serif"],
+      },
+      boxShadow: {
+        card: "0 1px 3px rgba(30, 51, 40, 0.06), 0 4px 16px rgba(30, 51, 40, 0.04)",
+        elevated: "0 8px 30px rgba(30, 51, 40, 0.12)",
       },
     },
   },
