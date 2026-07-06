@@ -1,20 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useData } from "@/lib/store";
 import { useToast } from "@/components/ui/Toast";
-import { EmptyState, PageHeader } from "@/components/ui/Card";
+import { EmptyState, PageHeader, RoleBadge, SearchBar } from "@/components/ui/Card";
 import { Modal, ConfirmDialog } from "@/components/ui/Modal";
 import {
-  ROLE_LABELS,
   MEMBERSHIP_STATUS_LABELS,
   PAYMENT_STATUS_LABELS,
+  ROLE_LABELS,
   type UserRole,
   type MembershipStatus,
   type PaymentStatus,
 } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
 
 const emptyUser = {
   full_name: "",
@@ -42,11 +41,19 @@ const emptyUser = {
 export default function SystemUsersPage() {
   const { data, addUser, updateUser, deleteUser, getGroupById } = useData();
   const { showToast } = useToast();
-
+  const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyUser);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return data.users;
+    const q = search.trim();
+    return data.users.filter(
+      (u) => u.full_name.includes(q) || u.email.includes(q)
+    );
+  }, [data.users, search]);
 
   const openCreate = () => {
     setEditingId(null);
@@ -108,48 +115,55 @@ export default function SystemUsersPage() {
     <div>
       <PageHeader
         title="ניהול משתמשים"
-        subtitle="יצירה, עריכה ומחיקת משתמשים"
+        subtitle={`${data.users.length} משתמשים`}
         action={
-          <button onClick={openCreate} className="btn-primary">
+          <button onClick={openCreate} className="btn-gold">
             <Plus className="w-5 h-5" />
             משתמש חדש
           </button>
         }
       />
 
-      {data.users.length === 0 ? (
-        <EmptyState title="אין משתמשים" />
+      <SearchBar value={search} onChange={setSearch} placeholder="חיפוש משתמש..." />
+
+      {filtered.length === 0 ? (
+        <EmptyState title="לא נמצאו משתמשים" />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full card">
+        <div className="table-card">
+          <table>
             <thead>
-              <tr className="border-b border-cream-300 text-right">
-                <th className="p-4 text-sm font-semibold text-forest-700">שם</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">אימייל</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">תפקיד</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">קבוצה</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">סטטוס</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">תשלום</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">הצטרפות</th>
-                <th className="p-4 text-sm font-semibold text-forest-700">פעולות</th>
+              <tr>
+                <th>שם</th>
+                <th>תפקיד</th>
+                <th>קבוצה</th>
+                <th>סטטוס</th>
+                <th className="w-24"></th>
               </tr>
             </thead>
             <tbody>
-              {data.users.map((u) => (
-                <tr key={u.id} className="border-b border-cream-200 last:border-0 hover:bg-cream-50">
-                  <td className="p-4 text-sm font-medium text-forest-800">{u.full_name}</td>
-                  <td className="p-4 text-sm text-forest-600" dir="ltr">{u.email}</td>
-                  <td className="p-4"><span className="badge-green">{ROLE_LABELS[u.role]}</span></td>
-                  <td className="p-4 text-sm text-forest-600">{u.group_id ? getGroupById(u.group_id)?.name : "—"}</td>
-                  <td className="p-4"><span className="badge-gray">{MEMBERSHIP_STATUS_LABELS[u.membership_status]}</span></td>
-                  <td className="p-4 text-sm text-forest-600">{PAYMENT_STATUS_LABELS[u.payment_status]}</td>
-                  <td className="p-4 text-sm text-forest-500">{formatDate(u.created_at)}</td>
-                  <td className="p-4">
-                    <div className="flex gap-2">
-                      <button onClick={() => openEdit(u.id)} className="btn-secondary btn-sm">
+              {filtered.map((u) => (
+                <tr key={u.id}>
+                  <td>
+                    <p className="font-semibold text-forest-900">{u.full_name}</p>
+                    <p className="text-xs text-forest-400 mt-0.5" dir="ltr">{u.email}</p>
+                  </td>
+                  <td><RoleBadge role={u.role} /></td>
+                  <td className="text-forest-600">
+                    {u.group_id ? getGroupById(u.group_id)?.name : "—"}
+                  </td>
+                  <td>
+                    {u.membership_status === "active" ? (
+                      <span className="badge-green">פעיל</span>
+                    ) : (
+                      <span className="badge-gray">{MEMBERSHIP_STATUS_LABELS[u.membership_status]}</span>
+                    )}
+                  </td>
+                  <td>
+                    <div className="flex gap-1 justify-end">
+                      <button onClick={() => openEdit(u.id)} className="icon-btn-edit" title="עריכה">
                         <Pencil className="w-4 h-4" />
                       </button>
-                      <button onClick={() => setDeleteId(u.id)} className="btn-danger btn-sm">
+                      <button onClick={() => setDeleteId(u.id)} className="icon-btn-delete" title="מחיקה">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -215,25 +229,12 @@ export default function SystemUsersPage() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="label">אזור</label>
-              <select className="input-field" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}>
-                <option value="">בחר אזור</option>
-                {data.regions.filter((r) => r.is_active).map((r) => (
-                  <option key={r.id} value={r.id}>{r.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="label">שם משרד</label>
-              <input className="input-field" value={form.firm_name} onChange={(e) => setForm({ ...form, firm_name: e.target.value })} />
-            </div>
           </div>
           <div>
             <label className="label">הערות פנימיות</label>
             <textarea className="input-field" value={form.internal_notes} onChange={(e) => setForm({ ...form, internal_notes: e.target.value })} />
           </div>
-          <button type="submit" className="btn-primary w-full">{editingId ? "שמירה" : "יצירה"}</button>
+          <button type="submit" className="btn-gold w-full">{editingId ? "שמירה" : "יצירה"}</button>
         </form>
       </Modal>
 
@@ -242,7 +243,7 @@ export default function SystemUsersPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         title="מחיקת משתמש"
-        message="האם אתם בטוחים שברצונכם למחוק משתמש זה? פעולה זו אינה ניתנת לביטול."
+        message="האם אתם בטוחים שברצונכם למחוק משתמש זה?"
         confirmLabel="מחק"
         danger
       />

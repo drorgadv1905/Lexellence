@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { Building2, Users, UserPlus, Calendar, Share2, MessageSquare, Shield } from "lucide-react";
+import { Building2, Users, UserPlus, Calendar, Share2, HelpCircle, Shield } from "lucide-react";
 import { useData } from "@/lib/store";
-import { StatCard } from "@/components/ui/Card";
-import { formatDate, isUpcoming } from "@/lib/utils";
+import { PageHeader, StatCard } from "@/components/ui/Card";
+import { isUpcoming } from "@/lib/utils";
 
 export default function SystemDashboardPage() {
   const { data } = useData();
@@ -12,71 +11,25 @@ export default function SystemDashboardPage() {
   const activeMembers = data.users.filter((u) => u.membership_status === "active" && u.role !== "super_admin").length;
   const candidates = data.candidates.filter((c) => ["new", "in_conversation"].includes(c.status)).length;
   const groupAdmins = data.users.filter((u) => u.role === "group_admin").length;
-  const upcomingEvents = data.events.filter((e) => isUpcoming(e.date) && e.status === "published").slice(0, 5);
+  const upcomingEventsCount = data.events.filter((e) => isUpcoming(e.date) && e.status === "published").length;
   const monthReferrals = data.referrals.length;
   const openRequests = data.requests.filter((r) => r.status === "open").length;
 
   return (
     <div>
-      <div className="hero-banner mb-8">
-        <div className="relative z-10">
-          <p className="text-gold-400 text-sm font-medium mb-1">ניהול מערכת</p>
-          <h1 className="font-display text-3xl font-semibold">דשבורד מנהל מערכת</h1>
-          <p className="text-forest-200 mt-2">סקירה כללית של Forum Lexellence</p>
-        </div>
+      <PageHeader title="דשבורד מערכת" subtitle="סקירה כללית של המערכת" />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <StatCard label="קבוצות" value={data.groups.length} icon={<Building2 className="w-5 h-5" />} />
+        <StatCard label="חברים פעילים" value={activeMembers} icon={<Users className="w-5 h-5" />} />
+        <StatCard label="מועמדים" value={candidates} icon={<UserPlus className="w-5 h-5" />} />
+        <StatCard label="מנהלי קבוצות" value={groupAdmins} icon={<Shield className="w-5 h-5" />} />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <StatCard label="קבוצות" value={data.groups.length} icon={<Building2 className="w-6 h-6" />} accent />
-        <StatCard label="חברים פעילים" value={activeMembers} icon={<Users className="w-6 h-6" />} />
-        <StatCard label="מועמדים" value={candidates} icon={<UserPlus className="w-6 h-6" />} />
-        <StatCard label="מנהלי קבוצות" value={groupAdmins} icon={<Shield className="w-6 h-6" />} />
-        <StatCard label="הפניות החודש" value={monthReferrals} icon={<Share2 className="w-6 h-6" />} />
-        <StatCard label="בקשות פתוחות" value={openRequests} icon={<MessageSquare className="w-6 h-6" />} />
-      </div>
-
-      <div className="card mb-8">
-        <div className="card-body">
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="w-5 h-5 text-forest-600" />
-            <h3 className="font-bold text-forest-800">אירועים קרובים בכל המערכת</h3>
-          </div>
-          {upcomingEvents.length === 0 ? (
-            <p className="text-forest-500 text-sm">אין אירועים קרובים</p>
-          ) : (
-            <ul className="space-y-2">
-              {upcomingEvents.map((e) => {
-                const group = data.groups.find((g) => g.id === e.group_id);
-                return (
-                  <li key={e.id} className="flex justify-between text-sm border-b border-cream-200 pb-2 last:border-0">
-                    <span className="font-medium text-forest-800">{e.title}</span>
-                    <span className="text-forest-500">{formatDate(e.date)} | {group?.name}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-      </div>
-
-      <h3 className="font-display font-semibold text-forest-900 mb-4">ניהול מהיר</h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link href="/system/users" className="quick-link text-center py-5">
-          <Users className="w-6 h-6 mx-auto text-gold-500 mb-2" />
-          <span className="text-sm font-medium text-forest-800">משתמשים</span>
-        </Link>
-        <Link href="/system/groups" className="quick-link text-center py-5">
-          <Building2 className="w-6 h-6 mx-auto text-gold-500 mb-2" />
-          <span className="text-sm font-medium text-forest-800">קבוצות</span>
-        </Link>
-        <Link href="/system/announcements" className="quick-link text-center py-5">
-          <MessageSquare className="w-6 h-6 mx-auto text-gold-500 mb-2" />
-          <span className="text-sm font-medium text-forest-800">הודעות מערכת</span>
-        </Link>
-        <Link href="/system/reports" className="quick-link text-center py-5">
-          <Share2 className="w-6 h-6 mx-auto text-gold-500 mb-2" />
-          <span className="text-sm font-medium text-forest-800">דוחות</span>
-        </Link>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <StatCard label="בקשות פתוחות" value={openRequests} icon={<HelpCircle className="w-5 h-5" />} />
+        <StatCard label="הפניות החודש" value={monthReferrals} icon={<Share2 className="w-5 h-5" />} />
+        <StatCard label="אירועים קרובים" value={upcomingEventsCount} icon={<Calendar className="w-5 h-5" />} />
       </div>
     </div>
   );

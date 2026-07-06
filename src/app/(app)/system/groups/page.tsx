@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useData } from "@/lib/store";
 import { useToast } from "@/components/ui/Toast";
-import { Card, EmptyState, PageHeader } from "@/components/ui/Card";
+import { EmptyState, PageHeader } from "@/components/ui/Card";
 import { Modal, ConfirmDialog } from "@/components/ui/Modal";
 import type { GroupStatus } from "@/lib/types";
 
@@ -19,7 +19,7 @@ const emptyGroup = {
   region: "",
   description: "",
   group_admin_id: "",
-  status: "active" as GroupStatus,
+  status: "forming" as GroupStatus,
   meeting_frequency: "",
   default_meeting_day: "",
   rules: "",
@@ -85,9 +85,9 @@ export default function SystemGroupsPage() {
     <div>
       <PageHeader
         title="ניהול קבוצות"
-        subtitle="יצירה, עריכה ומחיקת קבוצות"
+        subtitle={`${data.groups.length} קבוצות`}
         action={
-          <button onClick={openCreate} className="btn-primary">
+          <button onClick={openCreate} className="btn-gold">
             <Plus className="w-5 h-5" />
             קבוצה חדשה
           </button>
@@ -97,35 +97,32 @@ export default function SystemGroupsPage() {
       {data.groups.length === 0 ? (
         <EmptyState title="אין קבוצות" />
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {data.groups.map((g) => {
             const admin = getUserById(g.group_admin_id);
-            const memberCount = data.users.filter((u) => u.group_id === g.id).length;
+            const memberCount = data.users.filter((u) => u.group_id === g.id && u.membership_status === "active").length;
             return (
-              <Card key={g.id}>
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="flex gap-2 mb-2">
-                      <span className="badge-green">{GROUP_STATUS_LABELS[g.status]}</span>
-                    </div>
-                    <h3 className="font-bold text-forest-800 text-lg">{g.name}</h3>
-                    <p className="text-sm text-forest-600 mt-1">אזור: {g.region}</p>
-                    <p className="text-sm text-forest-600">מנהל: {admin?.full_name ?? "—"}</p>
-                    <p className="text-sm text-forest-500">חברים: {memberCount} | {g.default_meeting_day} | {g.meeting_frequency}</p>
-                    <p className="text-sm text-forest-700 mt-2">{g.description}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => openEdit(g.id)} className="btn-secondary btn-sm">
+              <div key={g.id} className="card relative">
+                <div className="card-body">
+                  <div className="absolute top-4 left-4 flex gap-1">
+                    <button onClick={() => openEdit(g.id)} className="icon-btn-edit">
                       <Pencil className="w-4 h-4" />
-                      עריכה
                     </button>
-                    <button onClick={() => setDeleteId(g.id)} className="btn-danger btn-sm">
+                    <button onClick={() => setDeleteId(g.id)} className="icon-btn-delete">
                       <Trash2 className="w-4 h-4" />
-                      מחיקה
                     </button>
+                  </div>
+                  <h3 className="font-bold text-forest-900 text-lg mb-1">{g.name}</h3>
+                  <p className="text-sm text-forest-500 mb-4">{g.region} — {g.description}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="badge-status-forming">{GROUP_STATUS_LABELS[g.status]}</span>
+                    <span className="badge-tag">{memberCount} חברים</span>
+                    {admin && (
+                      <span className="badge-tag-manager">מנהל: {admin.full_name}</span>
+                    )}
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
@@ -159,28 +156,12 @@ export default function SystemGroupsPage() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="label">יום מפגש קבוע</label>
-              <input className="input-field" value={form.default_meeting_day} onChange={(e) => setForm({ ...form, default_meeting_day: e.target.value })} />
-            </div>
-            <div>
-              <label className="label">תדירות מפגשים</label>
-              <input className="input-field" value={form.meeting_frequency} onChange={(e) => setForm({ ...form, meeting_frequency: e.target.value })} />
-            </div>
           </div>
           <div>
             <label className="label">תיאור</label>
             <textarea className="input-field" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
           </div>
-          <div>
-            <label className="label">כללי קבוצה</label>
-            <textarea className="input-field" value={form.rules} onChange={(e) => setForm({ ...form, rules: e.target.value })} />
-          </div>
-          <div>
-            <label className="label">הערות פנימיות</label>
-            <textarea className="input-field" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
-          </div>
-          <button type="submit" className="btn-primary w-full">{editingId ? "שמירה" : "יצירה"}</button>
+          <button type="submit" className="btn-gold w-full">{editingId ? "שמירה" : "יצירה"}</button>
         </form>
       </Modal>
 
@@ -189,7 +170,7 @@ export default function SystemGroupsPage() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
         title="מחיקת קבוצה"
-        message="האם אתם בטוחים שברצונכם למחוק קבוצה זו? פעולה זו אינה ניתנת לביטול."
+        message="האם אתם בטוחים שברצונכם למחוק קבוצה זו?"
         confirmLabel="מחק"
         danger
       />

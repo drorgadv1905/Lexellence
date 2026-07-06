@@ -133,7 +133,9 @@ export default function LoginPage() {
             </form>
 
             <div className="mt-8 pt-6 border-t border-cream-300">
-              <p className="text-sm text-forest-500 text-center mb-4">חשבונות לדוגמה</p>
+              <p className="text-sm text-forest-500 text-center mb-4">
+                חשבונות דמו לבדיקה (סיסמה: Lexellence123!):
+              </p>
               <div className="space-y-2">
                 {DEMO_CREDENTIALS.map((cred) => (
                   <button
@@ -141,10 +143,10 @@ export default function LoginPage() {
                     onClick={() => quickLogin(cred.email, cred.password)}
                     className="w-full text-right px-4 py-3.5 rounded-xl border border-cream-300 hover:border-gold-400/50 hover:bg-cream-50 transition text-sm group"
                   >
-                    <span className="font-medium text-forest-800 group-hover:text-forest-900">{cred.label}</span>
-                    <span className="block text-forest-400 text-xs mt-0.5" dir="ltr">
+                    <span className="font-medium text-forest-800 group-hover:text-forest-900" dir="ltr">
                       {cred.email}
                     </span>
+                    <span className="block text-forest-400 text-xs mt-0.5">{cred.label}</span>
                   </button>
                 ))}
               </div>

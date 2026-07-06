@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import { useData } from "@/lib/store";
 import { useToast } from "@/components/ui/Toast";
-import { Card, PageHeader } from "@/components/ui/Card";
+import { EmptyState, PageHeader } from "@/components/ui/Card";
 import { Modal, ConfirmDialog } from "@/components/ui/Modal";
 import { PERIOD_LABELS, type MembershipPeriod } from "@/lib/types";
 
@@ -70,41 +70,47 @@ export default function SystemMembershipPlansPage() {
   return (
     <div>
       <PageHeader
-        title="ניהול מסלולי חברות"
-        subtitle="תמחור ומסלולי חברות (ללא סליקה)"
+        title="מסלולי חברות"
+        subtitle="ניהול מסלולים ותמחור"
         action={
-          <button onClick={openCreate} className="btn-primary">
+          <button onClick={openCreate} className="btn-gold">
             <Plus className="w-5 h-5" />
             מסלול חדש
           </button>
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {data.membershipPlans.map((plan) => (
-          <Card key={plan.id}>
-            <div className="flex justify-between items-start">
-              <div>
-                <span className={`badge ${plan.is_active ? "badge-green" : "badge-gray"}`}>
+      <div className="alert-info">
+        אין סליקה אוטומטית בשלב זה. סטטוס תשלום מנוהל ידנית בפרופיל המשתמש.
+      </div>
+
+      {data.membershipPlans.length === 0 ? (
+        <EmptyState title="אין מסלולי חברות" />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {data.membershipPlans.map((plan) => (
+            <div key={plan.id} className="card relative">
+              <div className="card-body">
+                <div className="absolute top-4 left-4 flex gap-1">
+                  <button onClick={() => openEdit(plan.id)} className="icon-btn-edit">
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => setDeleteId(plan.id)} className="icon-btn-delete">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <h3 className="font-bold text-forest-900 text-lg mb-3">{plan.name}</h3>
+                <p className="text-3xl font-bold text-[#c49645]">₪{plan.price.toLocaleString()}</p>
+                <p className="text-sm text-forest-500 mb-3">{PERIOD_LABELS[plan.period]}</p>
+                <p className="text-sm text-forest-600 mb-4">{plan.description}</p>
+                <span className={plan.is_active ? "badge-green" : "badge-gray"}>
                   {plan.is_active ? "פעיל" : "לא פעיל"}
                 </span>
-                <h3 className="font-bold text-forest-800 text-lg mt-2">{plan.name}</h3>
-                <p className="text-2xl font-bold text-gold-600 mt-1">₪{plan.price.toLocaleString()}</p>
-                <p className="text-sm text-forest-500">{PERIOD_LABELS[plan.period]}</p>
-                <p className="text-sm text-forest-700 mt-2">{plan.description}</p>
-              </div>
-              <div className="flex gap-1">
-                <button onClick={() => openEdit(plan.id)} className="p-2 hover:bg-cream-200 rounded-lg">
-                  <Pencil className="w-4 h-4 text-forest-600" />
-                </button>
-                <button onClick={() => setDeleteId(plan.id)} className="p-2 hover:bg-red-50 rounded-lg">
-                  <Trash2 className="w-4 h-4 text-red-600" />
-                </button>
               </div>
             </div>
-          </Card>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={editingId ? "עריכת מסלול" : "מסלול חדש"}>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -138,7 +144,7 @@ export default function SystemMembershipPlansPage() {
             <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="w-4 h-4" />
             <span className="text-sm text-forest-700">מסלול פעיל</span>
           </label>
-          <button type="submit" className="btn-primary w-full">שמירה</button>
+          <button type="submit" className="btn-gold w-full">שמירה</button>
         </form>
       </Modal>
 

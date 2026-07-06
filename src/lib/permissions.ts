@@ -94,7 +94,7 @@ export function getNavItems(role: UserRole) {
   ];
 
   if (role === "super_admin") {
-    return { primary: superAdminNav, secondary: memberNav.slice(0, 4) };
+    return { primary: superAdminNav, secondary: [] };
   }
   if (role === "group_admin") {
     return { primary: groupAdminNav, secondary: memberNav };
